@@ -23,4 +23,8 @@ describe('Lottery',()=>{
         const manager = await lottery.methods.manager().call();
         assert.equal(accounts[0], manager);
     });
+    it('should set the players to be empty upon creation', async () => {    
+        const players = await lottery.methods.getPlayers().call();
+        console.log(players);
+    });
 })
