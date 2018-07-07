@@ -19,12 +19,36 @@ describe('Lottery',()=>{
     it('should deploy contract',()=>{
         assert.ok(lottery.options.address);
     });
+
     it('should set the contract creater account as manager', async () => {    
         const manager = await lottery.methods.manager().call();
         assert.equal(accounts[0], manager);
     });
+
     it('should set the players to be empty upon creation', async () => {    
         const players = await lottery.methods.getPlayers().call();
-        console.log(players);
+        assert.equal(0,players.length);
     });
-})
+
+    it('should let the player enter after sending atleast 0.01 ether', async () => {    
+        await lottery.methods.enter().send({
+            from: accounts[1],
+            value: web3.utils.toWei('10','ether')
+        });
+        const players = await lottery.methods.getPlayers().call();
+        assert.equal(1,players.length);
+        assert.equal(accounts[1],players[0]);
+    });
+
+    it('should not let the player enter after sending less than 0.01 ether', async () => {    
+        try {
+            await lottery.methods.enter().send({
+                from: accounts[1],
+                value: web3.utils.toWei('0.001','ether')
+            });
+            assert(false);
+        } catch(err) {
+            assert(err);
+        }
+    });
+});
