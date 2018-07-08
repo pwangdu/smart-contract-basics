@@ -27,7 +27,7 @@ describe('Lottery',()=>{
 
     it('should set the players to be empty upon creation', async () => {    
         const players = await lottery.methods.getPlayers().call();
-        assert.equal(0,players.length);
+        assert.equal(1, players.length);
     });
 
     it('should let the player enter after sending atleast 0.01 ether', async () => {    
@@ -36,8 +36,9 @@ describe('Lottery',()=>{
             value: web3.utils.toWei('10','ether')
         });
         const players = await lottery.methods.getPlayers().call();
-        assert.equal(1,players.length);
-        assert.equal(accounts[1],players[0]);
+        assert.equal(2, players.length);
+        assert.equal(accounts[0],players[0]);
+        assert.equal(accounts[1],players[1]);
     });
 
     it('should not let the player enter after sending less than 0.01 ether', async () => {    
@@ -51,4 +52,18 @@ describe('Lottery',()=>{
             assert(err);
         }
     });
+
+    // it('should not allow non manager to draw', async () => {
+    //     try {
+    //         await lottery.methods.enter().send({
+    //             from: accounts[2],
+    //             value: web3.utils.toWei('10','ether')
+    //         });
+    //         await lottery.methods.draw().call();
+    //         assert(false);
+    //     } catch (err) {
+    //         console.log(err);
+    //         assert(err);
+    //     }
+    // });
 });
